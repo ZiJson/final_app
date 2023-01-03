@@ -1,0 +1,25 @@
+type Query {
+Project(name: String):[Project]
+User(name: String!):User
+MyProject(name: String!):[Project]
+}
+type Project {
+name: String!
+content : String!
+users: [User]
+}
+type User {
+name: String!
+contact: String
+intro: String
+}
+
+type Mutation {
+    createProject(name: String!, content: String! ):Project!
+    createUser(name :String!, contact: String!, intro: String): User!
+    addUser(projectName: String!, username: String!): Project!
+    removeProject(name: String!):String
+}
+
+
+

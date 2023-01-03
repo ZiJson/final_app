@@ -4,20 +4,16 @@ import LogIn from "../components/Login";
 
 
 const SignIn = () => {
-    const {displayStatus,setSignedIn, me, setMe } = useHome();
-    const handleLogin = (name) => {
-        if (!name)
-            displayStatus({
-                type: "error",
-                msg: "Missing user name",
-            });
-        else setSignedIn(true);
+    const {displayStatus,setSignedIn, me, setMe, setAdmin, admin } = useHome();
+    const handleLogin = (input) => {
+        setMe(input.username);
+        setAdmin(input['login as']=='student'?false:true);
+        setSignedIn(true);
     }
-    console.log("from sign me:", me)
     return (
         <>
             <Title />
-            <LogIn me={me} setName={setMe} onLogin={handleLogin} />
+            <LogIn onFinish={handleLogin} />
         </>
     );
 }

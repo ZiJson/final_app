@@ -1,5 +1,5 @@
 import { UserOutlined } from "@ant-design/icons";
-import { Button, Form, Input, Select } from 'antd'
+import { Button, Form, Input, Select, Space } from 'antd'
 import styled from "styled-components";
 const Wrapper = styled.div`
 min-width: 400px;
@@ -8,9 +8,6 @@ align-items: center;
 justify-content: center;
 
 margin: 20px;
-Button{
-    margin-right: 10px;
-}
 `;
 const { Option } = Select;
 const layout = {
@@ -28,11 +25,8 @@ const tailLayout = {
     },
 };
 
-const LogIn = ({ me, setName, onLogin }) => {
+const LogIn = ({ onFinish }) => {
     const [form] = Form.useForm();
-    const onFinish = (values) => {
-        console.log(values);
-    };
     const onReset = () => {
         form.resetFields();
     };
@@ -69,15 +63,17 @@ const LogIn = ({ me, setName, onLogin }) => {
                     </Select>
                 </Form.Item>
                 <Form.Item {...tailLayout}>
-                    <Button type="primary" htmlType="submit">
-                        Submit
-                    </Button>
-                    <Button htmlType="button" onClick={onReset}>
-                        Reset
-                    </Button>
+                    <Space size={'middle'}>
+                        <Button type="primary" htmlType="submit">
+                            Submit
+                        </Button>
+                        <Button htmlType="button" onClick={onReset}>
+                            Reset
+                        </Button>
+                    </Space>
                 </Form.Item>
             </Form>
-        </Wrapper>
+        </Wrapper >
 
     );
 }

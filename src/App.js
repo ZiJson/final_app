@@ -1,7 +1,9 @@
 import logo from './logo.svg';
 import './App.css';
 import SignIn from './containers/SignIn';
+import Home from './containers/Home';
 import styled from 'styled-components';
+import { useHome } from './containers/hooks/useHome';
 
 
 const Wrapper = styled.div`
@@ -15,8 +17,9 @@ margin: auto;
 `;
 
 function App() {
+  const { signedIn } = useHome();
   return (
-    <Wrapper> { <SignIn />} </Wrapper>
+  signedIn ? <Home/>:<Wrapper><SignIn /></Wrapper>
   );
 }
 
