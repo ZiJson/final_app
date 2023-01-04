@@ -7,6 +7,8 @@ const SignIn = () => {
     const { displayStatus, setSignedIn, me, setMe, setAdmin, admin } = useHome();
     const handleLogin = (input) => {
         if (input['login as'] === 'student') {
+            setMe(input.username);
+            setAdmin(false);
         }
         else{
             if(input.username!=='admin'){
