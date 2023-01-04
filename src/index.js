@@ -15,7 +15,7 @@ import { createClient } from 'graphql-ws';
 import App from "./App.js";
 import reportWebVitals from "./reportWebVitals.js"
 import { WebSocketLink } from "apollo-link-ws";
-const url = new URL("/graphql", 'http://52.37.230.229:3100/');
+const url = new URL("/graphql",  window.location.href);
 const httpLink = new HttpLink({
   uri: url.href
 });
