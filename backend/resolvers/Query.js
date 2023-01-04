@@ -12,6 +12,9 @@ const Query = {
   User: async (parent, { name }, { UserModel }) => {
     let user = await UserModel.findOne({ name });
     return user
+  },
+  MyProject: (parent, { name }, { ProjectModel }) =>{
+    return ProjectModel.find({ users: { $elemMatch: {name} } })
   }
 };
 export default Query;

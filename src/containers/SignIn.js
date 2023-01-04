@@ -1,13 +1,21 @@
 import Title from "../components/Title";
-import {useHome} from "./hooks/useHome";
+import { useHome } from "./hooks/useHome";
 import LogIn from "../components/Login";
-
+import { message } from "antd";
 
 const SignIn = () => {
-    const {displayStatus,setSignedIn, me, setMe, setAdmin, admin } = useHome();
+    const { displayStatus, setSignedIn, me, setMe, setAdmin, admin } = useHome();
     const handleLogin = (input) => {
-        setMe(input.username);
-        setAdmin(input['login as']=='student'?false:true);
+        if (input['login as'] === 'student') {
+        }
+        else{
+            if(input.username!=='admin'){
+                message.error('you are not teacher!')
+                return
+            }
+            setMe(input.username);
+            setAdmin(true);
+        }
         setSignedIn(true);
     }
     return (

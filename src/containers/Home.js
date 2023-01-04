@@ -3,6 +3,7 @@ import Display from "../components/Display";
 import React, { useState } from 'react';
 import styled from "styled-components";
 import ProjectModal from "../components/ProjectModel";
+import ShowModal from "../components/ShowModel";
 import {
     DesktopOutlined,
     FileOutlined,
@@ -10,8 +11,9 @@ import {
     TeamOutlined,
     UserOutlined,
     RedoOutlined,
+    LogoutOutlined
 } from '@ant-design/icons';
-import { Breadcrumb, Layout, Menu, theme, Typography, Button } from 'antd';
+import { Breadcrumb, Layout, Menu, theme, Typography, Button, Select } from 'antd';
 const { Text } = Typography;
 const { Header, Content, Footer, Sider } = Layout;
 function getItem(label, key, icon, children) {
@@ -22,28 +24,47 @@ function getItem(label, key, icon, children) {
         label,
     };
 }
-const items = [
-    getItem('Project Team', '1', <PieChartOutlined />),
-    // getItem('Option 2', '2', <DesktopOutlined />),
-    // getItem('User', 'sub1', <UserOutlined />, [
-    //     getItem('Tom', '3'),
-    //     getItem('Bill', '4'),
-    //     getItem('Alex', '5'),
-    // ]),
-    getItem('My Projects', 'sub2', <TeamOutlined />, [getItem('Team 1', '2'), getItem('Team 2', '3 ')]),
-    // getItem('Files', '9', <FileOutlined />),
-];
 const Home = () => {
-    const { me, admin, projectData, refetchProject, createProject, createData, setSendRequest, addUser, removeProject } = useHome();
+    const { me, admin, projectData, refetchProject, createProject, createData, setSendRequest, addUser, removeProject, myProject,setSignedIn } = useHome();
     const [collapsed, setCollapsed] = useState(false);
     const [open, setOpen] = useState(false)
-    const [hi, setHi] = useState(true)
+    const [hi, setHi] = useState(false)
+    const [showProject, setShowProject] = useState(false)
+    const [toShow, setToShow] = useState(0)
+    const [menu, setMenu] = useState('1')
+    const items = [
+        getItem('Project Team', '1', <PieChartOutlined />),
+        getItem('My Projects', '2', <TeamOutlined />,myProject.length>=1?myProject.map((project, index)=>(
+            getItem(project.name, `${index+3}`)
+        )):[getItem('You have no project', '10')]),
+        getItem('Logout', '0', <LogoutOutlined/>)
+    ];
     const {
         token: { colorBgContainer },
     } = theme.useToken();
     const onClick = (e) => {
+        console.log("clink")
+        if(e.key=='1'){
+            setMenu(e.key)
+        }
+        else if(e.key=='0'){
+            setSignedIn(false
+                )
+        }
+        else {
+            show(e.key-3)
+        }
+    };
+    const onOpenChange = (e) => {
         console.log(e)
+        setMenu("2")
     }
+    const show = (index) => {
+        setToShow(index)
+        setShowProject(true)
+
+    }
+    
     const refresh = () => refetchProject({ name: "" });
     return (
         <Layout
@@ -52,14 +73,14 @@ const Home = () => {
             }}
         >
             <Sider collapsible collapsed={collapsed} onCollapse={(value) => {
-                console.log(value===true)
+                console.log(value === true)
                 if (value) {
                     setHi(value);
-                    setTimeout(()=>{setCollapsed(value)}, 0)
+                    setTimeout(() => { setCollapsed(value) }, 0)
                 }
-                else{
+                else {
                     setCollapsed(value);
-                    setTimeout(()=>{setHi(value)}, 50)
+                    setTimeout(() => { setHi(value) }, 50)
                 }
 
             }}>
@@ -72,7 +93,7 @@ const Home = () => {
                 >
                     <Hello><p>Hi! {hi ? "" : me}</p></Hello>
                 </div>
-                <Menu theme="dark" defaultSelectedKeys={['1']} mode="inline" items={items} onClick={onClick} />
+                <Menu theme="dark" defaultSelectedKeys={['1']} mode='inline' items={items} onClick={onClick} onOpenChange={onOpenChange} />
             </Sider>
             <Layout className="site-layout">
                 <Header
@@ -92,7 +113,8 @@ const Home = () => {
                         }}
                     >
                         <Breadcrumb.Item>User</Breadcrumb.Item>
-                        <Breadcrumb.Item>{admin ? "teacher" : "student"}</Breadcrumb.Item>
+                        <Breadcrumb.Item>{admin ? "Teacher" : "Student"}</Breadcrumb.Item>
+                        <Breadcrumb.Item>{menu=='1'? "All Projects" :"My Projects"}</Breadcrumb.Item>
                         <RefreshButton
                             // type="text"
                             icon={<RedoOutlined />}
@@ -101,6 +123,33 @@ const Home = () => {
                         >
                             Refresh
                         </RefreshButton>
+                        <Select
+                            showSearch
+                            optionFilterProp="children"
+                            filterSort={(optionA, optionB) =>
+                                (optionA?.label ?? '').toLowerCase().localeCompare((optionB?.label ?? '').toLowerCase())
+                            }
+                            filterOption={(input, option) =>
+                                (option?.label ?? '').toLowerCase().includes(input.toLowerCase())
+                            }
+                            style={{
+                                width: '20%',
+                                position: "absolute",
+                                right: "130px",
+                                top: "75px",
+                                height:"32px"
+                            }}
+                            placeholder="Project Searc"
+                            onChange={(value) => {
+                                show(value)
+                            }}
+                            options={projectData.map((project, index) => (
+                                {
+                                    value: index,
+                                    label: project.name
+                                }
+                            ))}
+                        />
                     </Breadcrumb>
                     <div
                         style={{
@@ -110,7 +159,7 @@ const Home = () => {
                         }}
                     >
                         <Display
-                            projectData={projectData}
+                            projectData={menu==="1"?projectData:menu==="2"?myProject:""}
                             createProject={createProject}
                             refetchProject={refetchProject}
                             setOpen={setOpen}
@@ -119,7 +168,9 @@ const Home = () => {
                                 await refetchProject({ name: "" })
                                 setSendRequest(true)
                             }}
-                            admin={admin}
+                            admin={admin?true:menu==="2"?true:false}
+                            show={show}
+                            menu={menu}
                         />
                     </div>
                 </Content>
@@ -128,9 +179,12 @@ const Home = () => {
                     onCancel={() => { setOpen(false); refresh() }}
                     onCreate={async (values) => {
                         try {
+                            console.log(values.contact)
                             await createProject({ variables: { name: values.project_name, content: values.content } })
-                            await values.team.map(async (user) => {
-                                await addUser({ variables: { projectName: values.project_name, username: user } })
+                            await values.team.map(async (user, index) => {
+                                let contact = index===0?values.contact:"";
+                                console.log(contact)
+                                await addUser({ variables: { projectName: values.project_name, username: user, contact:contact} })
                             })
 
                             console.log("created")
@@ -144,6 +198,7 @@ const Home = () => {
                     }}
                     me={me}
                 />
+                <ShowModal open={showProject} onCancel={() => { setShowProject(false) }} project={menu==='1'?projectData[toShow]:myProject.length>0?myProject[toShow]:""} />
                 <Footer
                     style={{
                         textAlign: 'center',

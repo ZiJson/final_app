@@ -20,6 +20,12 @@ const checkOutUser = async (name, contact="empty", intro="") => {
             intro
         }).save()
     }
+    else{
+        if(contact!=="Empty"&& user.contact!==contact){
+            await UserModel.updateOne({name},{contact})
+        }
+    }
+    user = await UserModel.findOne({name});
     return user
 }
 
@@ -36,9 +42,12 @@ const Mutation = {
         let user = checkOutUser(name, contact, intro);
         return user
     },
-    addUser: async (parent, { projectName, username }, {ProjectModel}) => {
-        let user = await checkOutUser(username);
-        let project = await ProjectModel.findOneAndUpdate({name:projectName},{$push: {users:user}})
+    addUser: async (parent, { projectName, username, contact}, {ProjectModel}) => {
+        let cc = contact===""?"Empty":contact
+        console.log(contact,cc)
+        let user = await checkOutUser(username,cc);
+        await ProjectModel.updateOne({name:projectName},{$push: {users:user}})
+        let project = await ProjectModel.findOne({name:projectName})
         return project
     },
     removeProject: async (parent, { name }, {ProjectModel}) =>{

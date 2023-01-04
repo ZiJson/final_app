@@ -17,7 +17,7 @@ intro: String
 type Mutation {
     createProject(name: String!, content: String! ):Project!
     createUser(name :String!, contact: String!, intro: String): User!
-    addUser(projectName: String!, username: String!): Project!
+    addUser(projectName: String!, username: String!, contact: String): Project!
     removeProject(name: String!):String
 }
 

@@ -14,8 +14,8 @@ mutation createProject($name: String!, $content: String!) {
 }
 `;
 export const ADD_User_MUTATION = gql`
-mutation addUser($projectName: String!, $username: String!) {
-    addUser(projectName:$projectName username:$username){
+mutation addUser($projectName: String!, $username: String!, $contact: String) {
+    addUser(projectName:$projectName username:$username contact:$contact){
       name
       content
       users{
