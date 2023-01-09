@@ -8,4 +8,6 @@
     
 3. ```yarn start```
 
-# 部署網址：project-platform.zijason.site
+# 部署網址：
+
+https://project-platform.zijason.site
